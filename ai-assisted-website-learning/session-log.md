@@ -130,3 +130,17 @@ The OAuth callback was redirecting to the internal Docker hostname because it de
 ### Verification note
 
 The source structure was reviewed locally. Dependencies have not yet been installed in this new project, so Docker build and TypeScript checks remain pending.
+
+### Profile and resume decision
+
+The product will support both structured manual profile entry and PDF resume upload. PDF extraction creates a reviewable draft; the user must confirm the extracted fields before they become the master profile.
+
+Decision: the MVP supports text-based PDFs only. Image-only or scanned PDFs will be detected and rejected with guidance; OCR is deferred to a later milestone.
+
+### Implementation milestone 5
+
+Added the first resume-import workflow: protected `/profile` page, PDF upload form, server-side extraction endpoint at `/api/profile/resume`, 5 MB limit, PDF validation, image-only PDF rejection, and extracted-text draft preview. The draft is not persisted yet; the next step is editable profile fields and confirmation.
+
+### Next mentoring question
+
+9. Should the first PDF workflow support only text-based PDFs, or should it also attempt OCR for scanned/image-based resumes?

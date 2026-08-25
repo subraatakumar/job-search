@@ -7,6 +7,10 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Next.js evaluates server modules while collecting route data. This value is
+# only available during image construction; runtime receives SESSION_SECRET
+# from compose/.env and still requires a real secret.
+ENV SESSION_SECRET=build-only-secret-not-used-at-runtime
 RUN npm run build
 
 FROM node:22-alpine AS runner

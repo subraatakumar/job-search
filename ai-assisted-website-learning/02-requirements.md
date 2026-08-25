@@ -5,6 +5,10 @@ This document records the first requirements derived from discovery. We will ref
 ## Initial functional requirements
 
 - A user can create and edit an international job-search profile.
+- A user can enter profile and resume information through structured forms.
+- A user can upload a PDF resume for extraction into a draft structured profile.
+- The user must review and confirm extracted information before it becomes the master profile.
+- The original uploaded resume must be retained separately from generated documents.
 - A user can configure target countries, cities, roles, keywords, salary, remote preference, and visa sponsorship preference.
 - A user can configure search frequency and pause or resume scheduled searches.
 - The system can collect jobs from approved sources and retain source evidence.
@@ -29,6 +33,7 @@ Authenticated platform automation is outside the initial MVP scope.
 ## Initial non-functional requirements
 
 - Do not fabricate user qualifications or job facts.
+- Preserve provenance for extracted profile fields and distinguish user-confirmed data from AI suggestions.
 - Protect API keys and personal application data.
 - Make AI-generated claims traceable to source text where possible.
 - Support graceful failure when a job source or AI provider is unavailable.
