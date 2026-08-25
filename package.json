@@ -1,0 +1,25 @@
+{
+  "name": "jobsearch",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.2.12",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "pg": "8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.0",
+    "@types/pg": "8.15.5",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "typescript": "6.0.3"
+  }
+}

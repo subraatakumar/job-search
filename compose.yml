@@ -1,0 +1,42 @@
+services:
+  jobsearch:
+    build: .
+    container_name: jobsearch-local
+    ports:
+      - "3020:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://jobsearch:${POSTGRES_PASSWORD:-jobsearch}@db:5432/jobsearch
+      APP_URL: ${APP_URL:-http://localhost:3020}
+      AUTH_BASE_URL: ${AUTH_BASE_URL:-http://localhost:3011}
+      AUTH_INTERNAL_URL: ${AUTH_INTERNAL_URL:-http://host.docker.internal:3011}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID:-jobsearch-web}
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://127.0.0.1:3000/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db:
+    image: postgres:17-alpine
+    container_name: jobsearch-db
+    environment:
+      POSTGRES_USER: jobsearch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jobsearch}
+      POSTGRES_DB: jobsearch
+    ports:
+      - "5433:5432"
+    volumes:
+      - jobsearch-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobsearch -d jobsearch"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  jobsearch-db-data:

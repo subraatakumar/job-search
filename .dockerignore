@@ -1,0 +1,5 @@
+node_modules
+.next
+.git
+.env
+ai-assisted-website-learning
