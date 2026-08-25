@@ -1,5 +1,7 @@
 # JobSearch
 
+![JobSearch — AI-assisted international job search](docs/images/jobsearch-hero.png)
+
 AI-assisted international job search and application preparation.
 
 ## Run locally with Docker

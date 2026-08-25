@@ -1,5 +1,40 @@
 # Mentoring Session Log
 
+## 2026-08-25 — Project foundation and first working flow
+
+### Completed
+
+- Defined the international AI-assisted job-search product.
+- Created the SDLC learning documentation structure.
+- Selected the MIT License with `Subrata Kumar Das` as copyright holder.
+- Selected Next.js, TypeScript, PostgreSQL, and Docker Compose.
+- Selected MVP job sources: public APIs, permitted company pages, and user-provided URLs.
+- Reused the central Subra Auth service with OAuth and PKCE.
+- Registered the `jobsearch-web` OAuth client.
+- Selected local port mapping `3020:3000` and PostgreSQL port `5433`.
+- Added the Docker startup script `re-run-local.sh`.
+- Added protected dashboard authentication.
+- Fixed Docker hostname redirects, local Auth connectivity, and session-cookie handling.
+- Added text-based PDF resume extraction and a polished profile upload screen.
+- Fixed drag-and-drop upload behavior.
+- Deferred OCR for scanned PDFs to a future milestone.
+
+### Verified
+
+- User authentication works locally.
+- Dashboard access works for authenticated users.
+- TypeScript checks pass.
+- Next.js production build passes.
+- Docker startup workflow is documented.
+
+### Current state
+
+The profile upload extracts resume text into a reviewable draft, but the draft is not yet saved as structured profile data.
+
+### Next step
+
+Create editable profile fields, let the user review extracted information, and save the confirmed master profile.
+
 ## Session 1 — Documentation setup
 
 ### Completed
