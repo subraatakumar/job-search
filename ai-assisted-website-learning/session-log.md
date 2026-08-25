@@ -176,6 +176,10 @@ Decision: the MVP supports text-based PDFs only. Image-only or scanned PDFs will
 
 Added the first resume-import workflow: protected `/profile` page, PDF upload form, server-side extraction endpoint at `/api/profile/resume`, 5 MB limit, PDF validation, image-only PDF rejection, and extracted-text draft preview. The draft is not persisted yet; the next step is editable profile fields and confirmation.
 
+### Deployment decision
+
+Added `./re-run-local.sh prod` for a separate production-like local stack. Production mode uses the `jobsearch-prod` Compose project, host port `3021`, PostgreSQL port `5434`, separate container names, and a separate database volume. Cloudflare Tunnel can route `jobs.subraatakumar.com` to `http://localhost:3021`.
+
 ### Next mentoring question
 
 9. Should the first PDF workflow support only text-based PDFs, or should it also attempt OCR for scanned/image-based resumes?

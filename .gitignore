@@ -1,6 +1,7 @@
 node_modules
 .next
 .env
+.env.prod
 *.log
 *.tsbuildinfo
 .DS_Store

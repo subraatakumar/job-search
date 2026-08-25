@@ -1,9 +1,9 @@
 services:
   jobsearch:
     build: .
-    container_name: jobsearch-local
+    container_name: ${JOBSEARCH_CONTAINER_NAME:-jobsearch-local}
     ports:
-      - "3020:3000"
+      - "127.0.0.1:${JOBSEARCH_HOST_PORT:-3020}:3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://jobsearch:${POSTGRES_PASSWORD:-jobsearch}@db:5432/jobsearch
@@ -23,13 +23,13 @@ services:
 
   db:
     image: postgres:17-alpine
-    container_name: jobsearch-db
+    container_name: ${JOBSEARCH_DB_CONTAINER_NAME:-jobsearch-db}
     environment:
       POSTGRES_USER: jobsearch
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jobsearch}
       POSTGRES_DB: jobsearch
     ports:
-      - "5433:5432"
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - jobsearch-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -40,3 +40,4 @@ services:
 
 volumes:
   jobsearch-db-data:
+    name: ${JOBSEARCH_DB_VOLUME:-jobsearch-db-data}

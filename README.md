@@ -90,4 +90,22 @@ To stop the services without deleting data:
 docker compose down
 ```
 
+## Run the production container locally
+
+Create a separate production environment file and configure real secrets:
+
+```bash
+cp .env.prod.example .env.prod
+# Edit .env.prod before starting
+./re-run-local.sh prod
+```
+
+Production mode uses separate containers and a separate PostgreSQL volume. It exposes the application on `localhost:3021` for Cloudflare Tunnel:
+
+```text
+jobs.subraatakumar.com → http://localhost:3021
+```
+
+Do not commit `.env.prod`. The script does not delete production volumes during updates.
+
 The guided SDLC documentation is in [ai-assisted-website-learning](ai-assisted-website-learning/README.md).
