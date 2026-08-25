@@ -36,7 +36,8 @@ p { color: #566176; font-size: 18px; line-height: 1.6; max-width: 680px; }
 .nav-links { display: flex; align-items: center; gap: 28px; }
 .nav-links a { color: #68738a; text-decoration: none; font-size: 14px; font-weight: 600; }
 .nav-links .nav-cta { color: #536dfe; border: 1px solid #d7dcf5; border-radius: 999px; padding: 10px 16px; }
-.hero-section { display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 48px; padding: 30px 0 76px; }
+.nav-links .open-source-link { color: #536dfe; }
+.hero-section { display: grid; grid-template-columns: .86fr 1.14fr; align-items: center; gap: 48px; padding: 30px 0 76px; }
 .hero-copy h1 { max-width: 610px; margin-bottom: 24px; }
 .hero-copy p { font-size: 20px; max-width: 570px; }
 .hero-actions { display: flex; align-items: center; gap: 22px; margin-top: 30px; }
@@ -45,6 +46,7 @@ p { color: #566176; font-size: 18px; line-height: 1.6; max-width: 680px; }
 .text-link { color: #536dfe; text-decoration: none; font-weight: 700; font-size: 14px; }
 .trust-line { color: #69758d; font-size: 13px; margin-top: 22px; }
 .trust-line span { color: #16794c; font-weight: 700; margin-right: 7px; }
+.provider-line { color: #69758d; font-size: 13px; line-height: 1.5; margin-top: 10px; max-width: 440px; }
 .hero-art { background: #e9edff; border-radius: 24px; overflow: hidden; box-shadow: 0 22px 60px rgba(50, 68, 145, .16); }
 .hero-art img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
 .intro-strip { border-top: 1px solid #e5e9f2; border-bottom: 1px solid #e5e9f2; padding: 25px 0; }

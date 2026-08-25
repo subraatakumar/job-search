@@ -1,7 +1,6 @@
 services:
   jobsearch:
     build: .
-    container_name: ${JOBSEARCH_CONTAINER_NAME:-jobsearch-local}
     ports:
       - "127.0.0.1:${JOBSEARCH_HOST_PORT:-3020}:3000"
     environment:
@@ -23,7 +22,6 @@ services:
 
   db:
     image: postgres:17-alpine
-    container_name: ${JOBSEARCH_DB_CONTAINER_NAME:-jobsearch-db}
     environment:
       POSTGRES_USER: jobsearch
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jobsearch}
