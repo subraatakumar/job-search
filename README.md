@@ -6,7 +6,7 @@ AI-assisted international job search and application preparation.
 
 ## Project status
 
-Early open-source MVP. Authentication and the Docker workflow are working. Resume import currently supports text-based PDFs and creates a reviewable draft; structured profile persistence and job-source integrations are next.
+Early open-source MVP. Authentication, Docker workflow, profile onboarding, multi-country search preferences, and encrypted AI-provider configuration are working. Job-source integrations, matching, and application tracking are next.
 
 ## Features
 
@@ -15,7 +15,10 @@ Early open-source MVP. Authentication and the Docker workflow are working. Resum
 - PostgreSQL-backed application foundation
 - Text-based PDF resume extraction
 - Review-first profile workflow
-- Planned OpenAI-compatible hosted and local AI providers
+- Searchable multi-country preferences with per-country schedules
+- OpenAI-compatible hosted and local AI provider configuration
+- AES-256-GCM encrypted server-side API-key storage
+- Provider connection testing
 
 ## Local URLs
 
@@ -23,6 +26,8 @@ Early open-source MVP. Authentication and the Docker workflow are working. Resum
 - Dashboard: [http://localhost:3020/dashboard](http://localhost:3020/dashboard)
 - Profile import: [http://localhost:3020/profile](http://localhost:3020/profile)
 - Health check: [http://localhost:3020/api/health](http://localhost:3020/api/health)
+- Job search setup: [http://localhost:3020/search](http://localhost:3020/search)
+- AI provider setup: [http://localhost:3020/settings](http://localhost:3020/settings)
 
 ## Development without Docker
 
@@ -51,6 +56,7 @@ Copy `.env.example` to `.env`. Never commit `.env`.
 - `AUTH_INTERNAL_URL`: URL the Docker container uses to reach Auth; local default is `http://host.docker.internal:3011`
 - `AUTH_CLIENT_ID`: registered OAuth client ID, currently `jobsearch-web`
 - `APP_URL`: public application URL, local default is `http://localhost:3020`
+- `PROVIDER_ENCRYPTION_KEY`: 32 random bytes encoded as 64 hexadecimal characters; required when saving provider keys
 
 ## Documentation
 

@@ -1,10 +1,2 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { readSession } from "@/lib/session";
-import ResumeUpload from "./resume-upload";
-
-export default async function ProfilePage() {
-  const session = readSession(new Request("http://localhost", { headers: await headers() }));
-  if (!session) redirect("/api/auth/login");
-  return <main><nav className="topbar"><a href="/dashboard">JobSearch</a><a href="/dashboard">Dashboard</a></nav><div className="eyebrow">Profile setup</div><h1>Build your master profile</h1><p>Start with your resume. We’ll extract a draft profile for you to review before it is used for applications.</p><ResumeUpload /></main>;
-}
+import { headers } from "next/headers"; import { redirect } from "next/navigation"; import { readSession } from "@/lib/session"; import { getProfile } from "@/lib/profile-repository"; import ResumeUpload from "./resume-upload"; import OnboardingStepper from "../onboarding-stepper";
+export default async function ProfilePage(){const session=readSession(new Request("http://localhost",{headers:await headers()}));if(!session)redirect("/api/auth/login");const saved=await getProfile(session.id);const existing=saved?{name:saved.name,email:saved.email,phone:saved.phone,headline:saved.headline,location:saved.location,countries:saved.target_countries,skills:saved.skills}:undefined;return <main><nav className="topbar"><a href="/dashboard">JobSearch</a><a href="/dashboard">Dashboard</a></nav><OnboardingStepper current={0} completed={saved?1:0}/><div className="eyebrow">{saved?"Profile":"Profile setup"}</div><h1>{saved?"Review your master profile":"Build your master profile"}</h1><p>{saved?"Update your details whenever your experience or goals change.":"Start with your resume. We’ll extract a draft profile for you to review before it is used for applications."}</p><ResumeUpload existingProfile={existing}/></main>}

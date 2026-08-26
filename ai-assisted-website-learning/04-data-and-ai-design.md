@@ -16,6 +16,12 @@ Extraction is not treated as truth. Each field should retain provenance such as 
 
 PDF files and extracted text contain sensitive personal information and require access control, retention limits, and deletion support.
 
+## AI provider configuration
+
+The application accepts hosted or local OpenAI-compatible providers, including Ollama. Provider settings are user-scoped. API keys are encrypted with AES-256-GCM before PostgreSQL persistence; the API exposes only whether a key exists, and decrypts it only for a server-side connection test or future AI request.
+
+The current provider layer does not imply complete OpenAI feature parity. Tool calling, structured output, streaming, and model capabilities must be detected or tested per provider. Future tools must be explicitly allowlisted and validated server-side.
+
 ## MVP PDF scope
 
 The first version supports text-based PDFs with an embedded text layer. Scanned or image-only PDFs will be detected and shown an explanatory message rather than sent through an OCR workflow.
@@ -24,4 +30,4 @@ OCR support is a future enhancement and will require separate evaluation for acc
 
 ## Status
 
-Not started.
+Resume/profile ingestion is implemented. AI provider persistence and connection testing are implemented. Job-description parsing, resume-to-job scoring, and safe tool execution remain planned.
