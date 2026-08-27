@@ -53,7 +53,9 @@ async function scrapeCandidate(candidate: SearchResult): Promise<ExtractedJob | 
     if (!likelyJobTitle(title)) return null;
     const company = clean(field(markdown, "Company") || (typeof metadata.author === "string" ? metadata.author : "") || companyFromTitle(title, hostname(candidate.url)));
     const location = clean(field(markdown, "Location") || field(markdown, "Work location"));
-    const description = clean(candidate.description ?? markdown.slice(0, 600));
+    // Preserve the search snippet, but also include actual scraped page content so
+    // downstream AI validation has enough evidence to classify and rank the role.
+    const description = clean(`${candidate.description ?? ""} ${markdown.slice(0, 1400)}`);
     const remote = /\bremote\b/i.test(`${title} ${location} ${description} ${markdown.slice(0, 3000)}`);
     return { title, url: candidate.url, company, location: location || (remote ? "Remote" : "Not specified"), description, remote, source: hostname(candidate.url) };
   } catch { return null }

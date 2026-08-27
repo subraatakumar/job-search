@@ -12,6 +12,11 @@ type Job = {
   source?: string;
   source_url?: string;
   url?: string;
+  matchScore?: number;
+  matchReasons?: string[];
+  workMode?: "remote" | "hybrid" | "on-site" | "unknown";
+  visaSupport?: "yes" | "no" | "unknown";
+  aiVerified?: boolean;
 };
 
 type ProgressStage = "idle" | "discovering" | "sources" | "verifying" | "formatting";
@@ -20,7 +25,7 @@ const stages: Array<{ id: Exclude<ProgressStage, "idle">; label: string }> = [
   { id: "discovering", label: "Searching the web for current openings" },
   { id: "sources", label: "Checking your additional saved sources" },
   { id: "verifying", label: "Opening and verifying individual job pages" },
-  { id: "formatting", label: "Preparing a structured shortlist" },
+  { id: "formatting", label: "Ranking matches and preparing your shortlist" },
 ];
 
 export default function Workspace({
@@ -118,7 +123,7 @@ export default function Workspace({
       setMessages((current) => [
         ...current,
         found.length
-          ? `Found ${found.length} verified job openings across the web${savedCount ? ` and ${savedCount} from saved sources` : ""}.`
+          ? `Found ${found.length} verified job openings across the web${savedCount ? ` and ${savedCount} from saved sources` : ""}.${web.aiEnhanced ? " Your AI provider validated and ranked the web results against your profile." : ""}${web.aiWarning ? " AI ranking was unavailable, so verified search results are shown without AI scoring." : ""}`
           : "No verified individual job openings matched this search. Try a role title, fewer filters, or another country.",
       ]);
     } catch (error) {
@@ -200,13 +205,19 @@ export default function Workspace({
               <div className="job-results-table">
                 <div className="job-results-heading">Verified opportunities</div>
                 <div className="job-result-row job-result-header" aria-hidden="true">
-                  <span>Company</span><span>Role</span><span>Location / Remote</span><span>Apply</span>
+                  <span>Company</span><span>Role</span><span>Location / Mode</span><span>Match</span><span>Apply</span>
                 </div>
                 {results.slice(0, 20).map((job) => (
                   <div className="job-result-row" key={job.id ?? job.url ?? job.source_url}>
                     <span data-label="Company"><strong>{job.company || job.source || "Company not listed"}</strong></span>
-                    <span data-label="Role">{job.title}</span>
-                    <span data-label="Location">{job.remote ? "Remote" : job.location || "Not specified"}</span>
+                    <span data-label="Role">
+                      <strong>{job.title}</strong>
+                      {job.matchReasons?.length ? <small className="match-reasons">{job.matchReasons.join(" · ")}</small> : null}
+                    </span>
+                    <span data-label="Location">{job.workMode && job.workMode !== "unknown" ? `${job.location || "Not specified"} · ${job.workMode}` : job.remote ? "Remote" : job.location || "Not specified"}</span>
+                    <span data-label="Match">
+                      {typeof job.matchScore === "number" ? <span className="match-score">{job.matchScore}%</span> : <span className="match-unscored">Not scored</span>}
+                    </span>
                     <span data-label="Apply">
                       <a href={job.source_url ?? job.url} target="_blank" rel="noreferrer">View job ↗</a>
                     </span>
