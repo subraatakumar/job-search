@@ -21,6 +21,7 @@ The material is written as a guided learning journal for developers. Each step r
 7. [07-deployment.md](07-deployment.md) — Release safely
 8. [08-monitoring-and-improvement.md](08-monitoring-and-improvement.md) — Operate and improve it
 9. [session-log.md](session-log.md) — Chronological record of our mentoring sessions
+10. [10-search-and-ai-orchestration-requirements.md](10-search-and-ai-orchestration-requirements.md) — Define reliable job discovery and AI orchestration requirements
 
 ## Working agreement
 

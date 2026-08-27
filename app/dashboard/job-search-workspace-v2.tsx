@@ -83,12 +83,6 @@ export default function Workspace({
     setMessages((current) => [...current, `You: ${searchText}`]);
     setHistory((current) => [searchText, ...current.filter((item) => item !== searchText)].slice(0, 8));
 
-    const sourcePromise = Promise.allSettled(
-      sources.map((source) =>
-        fetch(`/api/job-sources/${source.id}/refresh`, { method: "POST" }).then((response) => response.json()),
-      ),
-    );
-
     try {
       const webPromise = fetch("/api/jobs/search", {
         method: "POST",
@@ -101,29 +95,17 @@ export default function Workspace({
       });
 
       setStage("sources");
-      const [web, sourceResults] = await Promise.all([webPromise, sourcePromise]);
+      const web = await webPromise;
       setStage("verifying");
-      const webJobs = (web.jobs ?? []) as Job[];
-      const savedJobs = sourceResults.flatMap((result) => {
-        if (result.status !== "fulfilled" || !Array.isArray(result.value.jobs)) return [];
-        return result.value.jobs as Job[];
-      });
-      const found = Array.from(
-        new Map(
-          [...webJobs, ...savedJobs].map((job) => [job.source_url ?? job.url ?? `${job.company}-${job.title}`, job]),
-        ).values(),
-      ).slice(0, 20);
-      const savedCount = sourceResults.reduce((count, result) => {
-        if (result.status !== "fulfilled") return count;
-        return count + Number(result.value.count ?? 0);
-      }, 0);
+      const found = (web.jobs ?? []) as Job[];
+      const savedCount = Number(web.savedJobCount ?? 0);
 
       setStage("formatting");
       setResults(found);
       setMessages((current) => [
         ...current,
         found.length
-          ? `Found ${found.length} verified job openings across the web${savedCount ? ` and ${savedCount} from saved sources` : ""}.${web.aiEnhanced ? " Your AI provider validated and ranked the web results against your profile." : ""}${web.aiWarning ? " AI ranking was unavailable, so verified search results are shown without AI scoring." : ""}`
+          ? `Found ${found.length} verified job openings across the web${savedCount ? ` and ${savedCount} from saved sources` : ""}.${web.aiEnhanced ? " Your AI provider validated and ranked the combined results against your profile." : ""}${web.aiWarning ? " AI ranking was unavailable, so verified search results are shown without AI scoring." : ""}`
           : "No verified individual job openings matched this search. Try a role title, fewer filters, or another country.",
       ]);
     } catch (error) {

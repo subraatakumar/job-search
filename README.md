@@ -17,6 +17,8 @@ Early open-source MVP. Authentication, Docker workflow, profile onboarding, mult
 - Review-first profile workflow
 - Searchable multi-country preferences with per-country schedules
 - OpenAI-compatible hosted and local AI provider configuration
+- Official OpenAI SDK adapter with a server-side `search_jobs` tool
+- Firecrawl web search combined with user- and admin-saved public sources
 - AES-256-GCM encrypted server-side API-key storage
 - Provider connection testing
 - User and admin-managed public job-source configuration
