@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import { readSession } from "@/lib/session";
-import { isFirecrawlConfigured, searchWeb, scrapePublicSource, type ExtractedJob } from "@/lib/firecrawl-provider";
+import { isFirecrawlConfigured, searchWebDetailed, scrapePublicSource, type ExtractedJob } from "@/lib/firecrawl-provider";
 import { getAiProviderCredentials } from "@/lib/ai-provider-repository";
-import { getJobSources, saveJobs } from "@/lib/job-source-repository";
+import { getJobSources, saveJobs, recordSearch } from "@/lib/job-source-repository";
 import { validateAndRankJobs } from "@/lib/job-ai-ranking";
 import { getProfile } from "@/lib/profile-repository";
 import { requestJsonWithTools } from "@/lib/openai-compatible-client";
@@ -20,6 +20,16 @@ const searchJobsTool = {
     },
   },
 };
+function jobKey(job: ExtractedJob) {
+  try {
+    const url = new URL(job.url);
+    url.hash = "";
+    ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "ref"].forEach((key) => url.searchParams.delete(key));
+    return `url:${url.toString().replace(/\/$/, "").toLowerCase()}`;
+  } catch {
+    return `text:${job.company}|${job.title}|${job.location}`.toLowerCase().replace(/\s+/g, " ");
+  }
+}
 
 export async function POST(request: Request) {
   const session = readSession(new Request("http://localhost", { headers: await headers() }));
@@ -37,19 +47,21 @@ export async function POST(request: Request) {
     let searchedJobs: ExtractedJob[] = [];
     let savedJobCount = 0;
     let toolRetrieved = false;
+    let firecrawlDiagnostics = { requests: 0, rawResults: 0, candidateUrls: 0, pagesFetched: 0, verifiedJobs: 0, rejectedPages: 0, failedRequests: 0, errors: [] as string[] };
     const retrieveJobs = async (requestedQuery: string) => {
       const [webJobs, savedSourceResults] = await Promise.all([
-        searchWeb(requestedQuery),
+        searchWebDetailed(requestedQuery),
         Promise.allSettled(sources.map(async (source) => {
-          const jobs = await scrapePublicSource(source);
+          const jobs = (await scrapePublicSource(source)).map((job) => ({ ...job, sourceName: source.name, sourceType: source.source_type }));
           if (source.id && jobs.length) await saveJobs(session.id, source.id, jobs);
           return jobs;
         })),
       ]);
       const savedJobs = savedSourceResults.flatMap((result) => result.status === "fulfilled" ? result.value : []);
+      firecrawlDiagnostics = webJobs.diagnostics;
       savedJobCount += savedJobs.length;
-      searchedJobs = [...searchedJobs, ...webJobs, ...savedJobs];
-      return { count: webJobs.length + savedJobs.length, jobs: [...webJobs, ...savedJobs] };
+      searchedJobs = [...searchedJobs, ...webJobs.jobs, ...savedJobs];
+      return { count: webJobs.jobs.length + savedJobs.length, jobs: [...webJobs.jobs, ...savedJobs], diagnostics: webJobs.diagnostics };
     };
 
     if (credentials) {
@@ -81,11 +93,12 @@ export async function POST(request: Request) {
 
     const unique = new Map<string, ExtractedJob>();
     for (const job of searchedJobs) {
-      const key = `${job.company}|${job.title}|${job.location}`.toLowerCase();
+      const key = jobKey(job);
       if (!unique.has(key)) unique.set(key, job);
     }
     const jobs = Array.from(unique.values()).slice(0, 40);
-    if (!credentials || !jobs.length) return Response.json({ jobs, aiEnhanced: false, sourcesSearched: sources.length, savedJobCount });
+    const diagnostics = { discovered: firecrawlDiagnostics.rawResults, extracted: jobs.length, verified: jobs.length, scored: 0, savedSources: sources.length, firecrawl: firecrawlDiagnostics };
+    if (!credentials || !jobs.length) { await recordSearch(session.id, query, jobs.length); return Response.json({ jobs, aiEnhanced: false, sourcesSearched: sources.length, savedJobCount, diagnostics }); }
 
     try {
       const ranked = await validateAndRankJobs({
@@ -99,20 +112,24 @@ export async function POST(request: Request) {
         },
         jobs,
       });
+      await recordSearch(session.id, query, ranked.length || jobs.length);
       return Response.json({
         jobs: ranked.length ? ranked : jobs,
         aiEnhanced: ranked.length > 0,
         aiWarning: ranked.length ? undefined : "AI validation returned no usable jobs; showing Firecrawl-verified results.",
         sourcesSearched: sources.length,
         savedJobCount,
+        diagnostics: { ...diagnostics, scored: ranked.length },
       });
     } catch (error) {
+      await recordSearch(session.id, query, jobs.length);
       return Response.json({
         jobs,
         aiEnhanced: false,
         aiWarning: error instanceof Error ? error.message : "AI ranking was unavailable.",
         sourcesSearched: sources.length,
         savedJobCount,
+        diagnostics,
       });
     }
   }

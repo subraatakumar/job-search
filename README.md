@@ -26,6 +26,10 @@ Early open-source MVP. Authentication, Docker workflow, profile onboarding, mult
 - Firecrawl integration planned for JavaScript-heavy sources; OpenSERP is planned for general web discovery
 - Gated-platform credentials and cookies are never collected
 
+## Authentication modes
+
+Set `LOGIN_REQUIRED=false` in local `.env` to bypass Subra Auth and use a stable local development identity. Set `LOGIN_REQUIRED=true` in production to require sign-in through `auth.subraatakumar.com`. Authentication remains required when the variable is omitted.
+
 ## Local URLs
 
 - JobSearch: [http://localhost:3020](http://localhost:3020)

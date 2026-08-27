@@ -1,8 +1,10 @@
 import { createHash, randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { authConfig, authEndpoints } from "@/lib/auth-config";
+import { loginRequired } from "@/lib/session";
 
-export function GET() {
+export function GET(request: Request) {
+  if (!loginRequired()) return NextResponse.redirect(new URL("/dashboard", request.url));
   const state = randomBytes(32).toString("base64url");
   const verifier = randomBytes(32).toString("base64url");
   const challenge = createHash("sha256").update(verifier).digest("base64url");

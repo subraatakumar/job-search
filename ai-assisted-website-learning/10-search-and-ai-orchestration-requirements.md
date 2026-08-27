@@ -219,3 +219,7 @@ Requirements recorded on 2026-08-27. Phase 1 retrieval work is now implemented:
 - Saved-source failures do not discard general-web results.
 
 The official `openai` npm SDK adapter is implemented. It uses the configured endpoint as `baseURL`, so OpenAI, Ollama, and other compatible providers share the same request path. The `/api/jobs/search` route now exposes a bounded server-side `search_jobs` tool: the model requests retrieval, while the server executes Firecrawl web search plus enabled user/admin saved public sources, deduplicates results, persists source jobs, and then performs optional AI ranking. Providers without tool-calling support fall back to the same retrieval path directly.
+
+## Implementation review — 2026-08-27
+
+The retrieval milestone now also persists application and canonical URLs, source provenance, verification status/reason, structured job data, discovery/verification timestamps, content hashes, and AI match metadata. Search responses expose bounded pipeline diagnostics and the dashboard distinguishes the application link from the original listing. Remaining hardening work includes durable search-history records, retained failure candidates, automated fixtures, and end-to-end observability.

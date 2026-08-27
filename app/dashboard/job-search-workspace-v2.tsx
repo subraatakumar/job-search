@@ -8,15 +8,19 @@ type Job = {
   title: string;
   company: string;
   location: string;
+  description?: string;
   remote?: boolean;
   source?: string;
   source_url?: string;
   url?: string;
+  applyUrl?: string;
+  retrievedAt?: string;
   matchScore?: number;
   matchReasons?: string[];
   workMode?: "remote" | "hybrid" | "on-site" | "unknown";
   visaSupport?: "yes" | "no" | "unknown";
   aiVerified?: boolean;
+  sourceName?: string;
 };
 
 type ProgressStage = "idle" | "discovering" | "sources" | "verifying" | "formatting";
@@ -56,6 +60,8 @@ export default function Workspace({
   ]);
   const [results, setResults] = useState<Job[]>(jobs);
   const [history, setHistory] = useState<string[]>([]);
+  const [diagnostics, setDiagnostics] = useState<any>(null);
+  const [savedUrls, setSavedUrls] = useState<string[]>([]);
 
   const toggle = (value: string, values: string[], update: (next: string[]) => void) => {
     update(values.includes(value) ? values.filter((item) => item !== value) : [...values, value]);
@@ -98,15 +104,19 @@ export default function Workspace({
       const web = await webPromise;
       setStage("verifying");
       const found = (web.jobs ?? []) as Job[];
+      setDiagnostics(web.diagnostics ?? null);
       const savedCount = Number(web.savedJobCount ?? 0);
 
       setStage("formatting");
       setResults(found);
+      const firecrawlUnavailable = web.diagnostics?.firecrawl?.failedRequests > 0 && web.diagnostics?.firecrawl?.rawResults === 0;
       setMessages((current) => [
         ...current,
         found.length
           ? `Found ${found.length} verified job openings across the web${savedCount ? ` and ${savedCount} from saved sources` : ""}.${web.aiEnhanced ? " Your AI provider validated and ranked the combined results against your profile." : ""}${web.aiWarning ? " AI ranking was unavailable, so verified search results are shown without AI scoring." : ""}`
-          : "No verified individual job openings matched this search. Try a role title, fewer filters, or another country.",
+          : firecrawlUnavailable
+            ? "I couldn’t reach the Firecrawl search service, so no web search was completed. Please start Firecrawl or check FIRECRAWL_URL, then try again."
+            : `No verified individual job openings matched this search. ${web.diagnostics?.discovered ? `I discovered ${web.diagnostics.discovered} candidates but could not verify them as current job postings.` : "No candidates were discovered."} Try a role title, fewer filters, or another country.`,
       ]);
     } catch (error) {
       setMessages((current) => [
@@ -186,6 +196,8 @@ export default function Workspace({
             {!busy && results.length > 0 && (
               <div className="job-results-table">
                 <div className="job-results-heading">Verified opportunities</div>
+                {diagnostics && <small className="muted">Pipeline: {diagnostics.discovered} discovered · {diagnostics.extracted} extracted · {diagnostics.verified} verified · {diagnostics.scored} scored · {diagnostics.savedSources} saved sources</small>}
+                {diagnostics?.firecrawl && <div className={`firecrawl-diagnostics ${diagnostics.firecrawl.failedRequests > 0 && diagnostics.firecrawl.rawResults === 0 ? "unavailable" : ""}`}><strong>Firecrawl diagnostics</strong><span>{diagnostics.firecrawl.requests} requests · {diagnostics.firecrawl.rawResults} raw results · {diagnostics.firecrawl.candidateUrls} candidate URLs · {diagnostics.firecrawl.pagesFetched} pages fetched · {diagnostics.firecrawl.rejectedPages} rejected · {diagnostics.firecrawl.failedRequests} failed</span>{diagnostics.firecrawl.failedRequests > 0 && diagnostics.firecrawl.rawResults === 0 ? <small>Firecrawl is unreachable. Check that the service is running and FIRECRAWL_URL is correct.</small> : diagnostics.firecrawl.errors?.length ? <small>{diagnostics.firecrawl.errors.join(" · ")}</small> : null}</div>}
                 <div className="job-result-row job-result-header" aria-hidden="true">
                   <span>Company</span><span>Role</span><span>Location / Mode</span><span>Match</span><span>Apply</span>
                 </div>
@@ -196,17 +208,20 @@ export default function Workspace({
                       <strong>{job.title}</strong>
                       {job.matchReasons?.length ? <small className="match-reasons">{job.matchReasons.join(" · ")}</small> : null}
                     </span>
-                    <span data-label="Location">{job.workMode && job.workMode !== "unknown" ? `${job.location || "Not specified"} · ${job.workMode}` : job.remote ? "Remote" : job.location || "Not specified"}</span>
+                    <span data-label="Location">{job.workMode && job.workMode !== "unknown" ? `${job.location || "Not specified"} · ${job.workMode}` : job.remote ? "Remote" : job.location || "Not specified"}<small>{job.visaSupport === "yes" ? "Visa support indicated" : job.visaSupport === "no" ? "No visa support indicated" : "Visa support unknown"}</small></span>
                     <span data-label="Match">
                       {typeof job.matchScore === "number" ? <span className="match-score">{job.matchScore}%</span> : <span className="match-unscored">Not scored</span>}
                     </span>
                     <span data-label="Apply">
-                      <a href={job.source_url ?? job.url} target="_blank" rel="noreferrer">View job ↗</a>
+                      <a href={job.applyUrl ?? job.source_url ?? job.url} target="_blank" rel="noreferrer">Apply ↗</a>
+                      {job.applyUrl && job.applyUrl !== (job.source_url ?? job.url) ? <small><a href={job.source_url ?? job.url} target="_blank" rel="noreferrer">Listing</a></small> : null}
+                      <button type="button" className="text-link" onClick={async () => { const sourceUrl = job.source_url ?? job.url; if (!sourceUrl) return; const response = await fetch("/api/jobs/save", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ title: job.title, company: job.company, location: job.location, description: job.description ?? "", sourceUrl, applyUrl: job.applyUrl, sourceName: job.sourceName ?? job.source }) }); if (response.ok) setSavedUrls((current) => current.includes(sourceUrl) ? current : [...current, sourceUrl]); }}>{savedUrls.includes(job.source_url ?? job.url ?? "") ? "Saved" : "Save"}</button>
                     </span>
                   </div>
                 ))}
               </div>
             )}
+            {!busy && diagnostics?.firecrawl && results.length === 0 && <div className={`firecrawl-diagnostics ${diagnostics.firecrawl.failedRequests > 0 && diagnostics.firecrawl.rawResults === 0 ? "unavailable" : ""}`}><strong>Firecrawl diagnostics</strong><span>{diagnostics.firecrawl.requests} requests · {diagnostics.firecrawl.rawResults} raw results · {diagnostics.firecrawl.candidateUrls} candidate URLs · {diagnostics.firecrawl.pagesFetched} pages fetched · {diagnostics.firecrawl.rejectedPages} rejected · {diagnostics.firecrawl.failedRequests} failed</span>{diagnostics.firecrawl.failedRequests > 0 && diagnostics.firecrawl.rawResults === 0 ? <small>Firecrawl is unreachable. Check that the service is running and FIRECRAWL_URL is correct.</small> : diagnostics.firecrawl.errors?.length ? <small>{diagnostics.firecrawl.errors.join(" · ")}</small> : null}</div>}
           </div>
 
           <form className="chat-composer" onSubmit={submit}>

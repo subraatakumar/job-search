@@ -1,0 +1,6 @@
+[
+  {"name":"ats-job","url":"https://jobs.example.com/jobs/senior-react-native-engineer-1234","title":"Senior React Native Engineer","expected":"job"},
+  {"name":"search-page","url":"https://jobs.example.com/jobs","title":"Search jobs","expected":"non-job"},
+  {"name":"browser-block","url":"https://example.com/job/123","title":"Verifying your browser","expected":"blocked"},
+  {"name":"docs","url":"https://github.com/example/react-native","title":"React Native library","expected":"non-job"}
+]

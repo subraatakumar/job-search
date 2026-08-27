@@ -217,6 +217,10 @@ footer a { color: #536dfe; text-decoration: none; }
 .catalog-item a { display: grid; gap: 4px; color: inherit; text-decoration: none; }
 .catalog-item small { color: #71809d; }
 .saved-sources-card { margin-bottom: 18px; }
+.firecrawl-diagnostics { display: grid; gap: 4px; margin: 12px 0; padding: 10px 12px; border: 1px solid #e5e9f2; border-radius: 10px; color: #68738a; font-size: 12px; }
+.firecrawl-diagnostics strong { color: #536dfe; }
+.firecrawl-diagnostics.unavailable { border-color: #f0b6ad; background: #fff8f6; }
+.firecrawl-diagnostics.unavailable strong { color: #b54535; }
 .source-search-list { display: grid; gap: 8px; margin-top: 14px; }
 .source-search-item { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 14px; border: 1px solid #e3e7f2; border-radius: 10px; }
 .source-search-item span { display: grid; gap: 4px; min-width: 0; }

@@ -5,6 +5,7 @@ services:
       - "127.0.0.1:${JOBSEARCH_HOST_PORT:-3020}:3000"
     environment:
       NODE_ENV: production
+      LOGIN_REQUIRED: ${LOGIN_REQUIRED:-true}
       DATABASE_URL: postgresql://jobsearch:${POSTGRES_PASSWORD:-jobsearch}@db:5432/jobsearch
       APP_URL: ${APP_URL:-http://localhost:3020}
       AUTH_BASE_URL: ${AUTH_BASE_URL:-http://localhost:3011}

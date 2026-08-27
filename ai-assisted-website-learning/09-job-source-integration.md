@@ -70,6 +70,7 @@ jobs
 - Rate-limit each source and user.
 - Deduplicate using canonical URLs and content hashes.
 - Keep source attribution and retrieval timestamps.
+- Search runs retain candidate provenance, verification outcomes, application links, canonical URLs, and source-level failures. Firecrawl requests use bounded retries and freshness-limited discovery; failed candidates are diagnostic data and are never displayed as verified jobs.
 - Provide deletion and disable controls for user-created sources.
 
 ## MVP scope

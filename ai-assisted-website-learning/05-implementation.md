@@ -19,6 +19,10 @@ This document records the development steps, code decisions, local setup, and in
 
 Integrate self-hosted Firecrawl as a separate Docker service for JavaScript-heavy public sources, add OpenSERP later for anonymous general discovery, and then compare structured candidate profile data with job requirements using an explainable match score.
 
+## Search pipeline implementation
+
+The production path is `Firecrawl search → candidate URL verification → structured extraction → application-link extraction → canonical deduplication → optional AI matching`. Search results are persisted with source provenance and timestamps. The dashboard exposes application and listing URLs, visa-support signals, match explanations, and a Save action. Retrieval failures are bounded, recorded as diagnostics, and excluded from verified results.
+
 ## Status
 
 In progress.
