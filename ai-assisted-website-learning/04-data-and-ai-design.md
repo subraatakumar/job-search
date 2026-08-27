@@ -22,6 +22,10 @@ The application accepts hosted or local OpenAI-compatible providers, including O
 
 The current provider layer does not imply complete OpenAI feature parity. Tool calling, structured output, streaming, and model capabilities must be detected or tested per provider. Future tools must be explicitly allowlisted and validated server-side.
 
+Job-source ingestion follows a similar boundary: public HTTPS pages and authorized APIs may be fetched; gated sources require official integrations or user-controlled manual import. Credentials and session cookies are out of scope for storage.
+
+The planned web-search layer separates discovery from extraction. OpenSERP can provide general search-engine results, while self-hosted Firecrawl can render and extract content from JavaScript-heavy public career pages. Both are called server-side through adapters and produce the same normalized job shape before AI matching. The AI provider is used for matching and document preparation, not as a substitute for deterministic source retrieval.
+
 ## MVP PDF scope
 
 The first version supports text-based PDFs with an embedded text layer. Scanned or image-only PDFs will be detected and shown an explanatory message rather than sent through an OCR workflow.

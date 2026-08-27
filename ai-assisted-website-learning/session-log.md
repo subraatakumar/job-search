@@ -263,3 +263,30 @@ Added `./re-run-local.sh prod` for a separate production-like local stack. Produ
 - Updated the data/AI design document with provider compatibility boundaries and safe future tool-calling requirements.
 - Updated the implementation document with completed milestones and the next job-matching milestone.
 - Current boundary: the provider configuration is OpenAI-compatible, but complete OpenAI feature parity is not assumed across Ollama and other endpoints.
+
+### 2026-08-26 — Job-source integration design
+
+- Documented public career-page sources, official integrations, and manual job imports.
+- Explicitly excluded password, session-cookie, and browser-cookie collection for gated platforms.
+- Added proposed `job_sources` and `jobs` data models.
+- Documented SSRF, redirect, rate-limit, response-size, sanitization, deduplication, attribution, and deletion controls.
+- No job-source fetcher or gated-platform automation has been implemented yet.
+
+### 2026-08-26 — Public job-source configuration started
+
+- Added authenticated `/sources` screen for saving public company career-page URLs.
+- Added PostgreSQL-backed `job_sources` persistence with per-user ownership and frequency.
+- Added add/list/remove API routes.
+- Added HTTPS-only and SSRF-oriented host validation before source persistence.
+- Gated-platform credentials, cookies, and automated login remain out of scope.
+- Fetching and job-description parsing remain the next implementation slice.
+
+### 2026-08-27 — Search-provider direction: Firecrawl and OpenSERP
+
+- Compared Firecrawl and OpenSERP for the public-source and anonymous-discovery requirements.
+- Decided to separate search discovery from page extraction behind provider adapters.
+- OpenSERP is the planned lightweight, MIT-licensed option for general web discovery across supported search engines.
+- Firecrawl is the planned extraction option for JavaScript-heavy public career pages such as the Make it in Germany listing page.
+- Confirmed that Firecrawl can be self-hosted with its official Docker Compose stack and public container images. It will initially run as a separate Compose project, normally exposing its API on `localhost:3002`, rather than increasing the complexity of the main JobSearch stack.
+- Self-hosting removes hosted request billing but still requires local/server resources and operational maintenance.
+- Current implementation remains direct-fetch parsing with a Firecrawl integration planned next; no gated-platform credential or cookie storage is being added.

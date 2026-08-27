@@ -1,0 +1,2 @@
+import {headers} from "next/headers"; import {readSession} from "@/lib/session"; import {deleteJobSource} from "@/lib/job-source-repository";
+export async function DELETE(_:Request,{params}:{params:Promise<{id:string}>}){const session=readSession(new Request("http://localhost",{headers:await headers()}));if(!session)return Response.json({error:"Unauthorized"},{status:401});const {id}=await params;await deleteJobSource(session.id,id);return new Response(null,{status:204})}

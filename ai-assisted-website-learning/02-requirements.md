@@ -1,5 +1,9 @@
 # 02 — Requirements
 
+## Job-source boundary
+
+Users can configure public career-page URLs and permitted official integrations. The MVP must not request, store, or replay passwords, session cookies, or browser-cookie exports for gated platforms. Users may instead paste a job URL or upload a job description for manual import.
+
 This document records the first requirements derived from discovery. We will refine them after choosing the MVP scope.
 
 ## Initial functional requirements

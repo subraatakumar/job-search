@@ -33,6 +33,10 @@ If an approved integration requires authentication, use the platform's supported
 
 The initial architecture decision is therefore: public/approved sources first, authenticated sources behind explicit integration review, and no cookie-upload feature.
 
+### Search provider architecture
+
+The source layer separates discovery from extraction. OpenSERP is the planned provider for anonymous general search-engine discovery. Firecrawl is the planned provider for rendering and extracting JavaScript-heavy public career pages. Both will be optional services behind server-side adapters, with normalized results written to the same `jobs` model. Firecrawl will initially run in its own Docker Compose project rather than inside the main application stack.
+
 ## Public open-source distribution
 
 The project can be made public on GitHub or another public Git host. A responsible open-source release should include:

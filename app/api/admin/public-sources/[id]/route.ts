@@ -1,0 +1,2 @@
+import {headers} from "next/headers";import {readSession} from "@/lib/session";import {isAdmin} from "@/lib/admin";import {deleteCatalogSource} from "@/lib/public-source-catalog-repository";
+export async function DELETE(_:Request,{params}:{params:Promise<{id:string}>}){const s=readSession(new Request("http://localhost",{headers:await headers()}));if(!s||!isAdmin(s.email))return Response.json({error:"Forbidden"},{status:403});await deleteCatalogSource((await params).id);return Response.json({ok:true})}

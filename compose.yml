@@ -11,6 +11,8 @@ services:
       AUTH_INTERNAL_URL: ${AUTH_INTERNAL_URL:-http://host.docker.internal:3011}
       AUTH_CLIENT_ID: ${AUTH_CLIENT_ID:-jobsearch-web}
       SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env}
+      FIRECRAWL_URL: ${FIRECRAWL_URL:-}
+      FIRECRAWL_API_KEY: ${FIRECRAWL_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy

@@ -30,6 +30,10 @@ We will make one meaningful decision at a time. I will ask mentoring questions, 
 
 The project can be released publicly as open source. The repository should keep the core application, Docker setup, provider interface, documentation, and test suite transparent while keeping all secrets, personal data, credentials, and deployment-specific configuration outside the repository.
 
+## Current search direction
+
+The product separates anonymous discovery from public-page extraction. OpenSERP is planned for general search-engine discovery, while Firecrawl is planned for JavaScript-heavy public career pages. Firecrawl will be run as a separate Docker Compose project during validation so the main JobSearch stack remains smaller and the extraction service stays replaceable.
+
 ### License decision
 
 The planned license is the MIT License, held by Subrata Kumar Das. It permits personal use, modification, redistribution, and commercial use, provided that the copyright and license notice are retained. See [LICENSE](LICENSE).

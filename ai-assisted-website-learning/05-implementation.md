@@ -12,10 +12,12 @@ This document records the development steps, code decisions, local setup, and in
 - Multiple country-specific searches with roles, sponsorship preference, and daily/weekly/monthly/manual frequency.
 - Four-step onboarding UI shared across dashboard, profile, and search screens.
 - Encrypted AI provider API-key storage, saved-provider loading, and server-side connection testing.
+- Authenticated user/admin public-source management, optional country association, and on-demand source refresh.
+- Initial HTML job-link extraction and normalized job persistence, with a provider boundary for future extraction engines.
 
 ## Current next milestone
 
-Implement a first-job-source integration, normalize job descriptions, and compare structured candidate profile data with job requirements using an explainable match score.
+Integrate self-hosted Firecrawl as a separate Docker service for JavaScript-heavy public sources, add OpenSERP later for anonymous general discovery, and then compare structured candidate profile data with job requirements using an explainable match score.
 
 ## Status
 
